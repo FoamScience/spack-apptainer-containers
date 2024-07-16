@@ -1,0 +1,17 @@
+containers:
+  extra_basics: /home/fadeli/repos/spack-apptainer-containers
+  basic:
+    opencfd-openfoam: # base container identifier
+      os:
+        distro: spack_ubuntu-bionic
+        version: latest
+      mpi:
+        implementation: spack_openmpi
+        version: 4.1.5
+      framework:
+        definition: spack_openfoam
+        version: 2306
+pull:
+  try_to_pull: false
+  protocol: "oras"
+  scope: "ghcr.io/foamscience"

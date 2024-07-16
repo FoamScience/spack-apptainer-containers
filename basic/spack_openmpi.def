@@ -1,0 +1,45 @@
+Bootstrap: docker
+From: {{ OS_DISTRO }}:{{ OS_VERSION }}
+
+%post
+    . /opt/spack/share/spack/setup-env.sh
+    spack mirror add develop https://binaries.spack.io/develop
+    spack mirror add E4S https://cache.e4s.io
+    spack buildcache keys --install --trust
+    spack env create default-env
+    cat <<EOF > /opt/spack/var/spack/environments/default-env/spack.yaml
+spack:
+  config:
+    install_tree: /opt/software
+  concretizer:
+    unify: false
+EOF
+    spack env activate default-env
+    mpi_impl=$(expr "{{ MPI_IMPLEMENTATION }}" : 'spack_\(.*\)')
+    spack add libxcrypt%gcc@7.5.0
+    spack install --fail-fast
+    spack add jq ${mpi_impl}@{{ MPI_VERSION }}
+    spack install --fail-fast
+    echo '{}' > /apps.json
+    jq --arg app $mpi_impl \
+        '.[$app] |= if . == null then
+        {
+            version: "{{ MPI_VERSION }}"
+        }
+        else . +
+        {
+            version: "{{ MPI_VERSION }}"
+        } end' /apps.json > /tmp/apps.json
+    mv /tmp/apps.json /apps.json
+
+%runscript
+    if [ $# -eq 0 ]
+    then
+        /bin/bash -c ". /opt/spack/share/spack/setup-env.sh && spack env activate default-env && /bin/bash --login"
+    else
+        /bin/bash -c ". /opt/spack/share/spack/setup-env.sh && spack env activate default-env && $@"
+    fi
+
+%labels
+    Maintainer Mohammed Elwardi Fadeli
+    Description Spack-powered MPI image

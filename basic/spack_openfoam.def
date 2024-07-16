@@ -1,0 +1,35 @@
+Bootstrap: localimage
+From: ./containers/basic/{{ OS_DISTRO }}-{{ OS_VERSION }}-{{MPI_IMPLEMENTATION}}-{{ MPI_VERSION }}.sif
+
+%post
+    . /opt/spack/share/spack/setup-env.sh
+    spack env activate default-env
+    mpi_impl=$(expr "{{ MPI_IMPLEMENTATION }}" : 'spack_\(.*\)')
+    spack add openfoam@{{ FRAMEWORK_VERSION }}
+    spack install --fail-fast
+    jq --arg app openfoam \
+        '.[$app] |= if . == null then
+        {
+            version: "{{ FRAMEWORK_VERSION }}",
+            commit: "default",
+            branch: "default"
+        }
+        else . +
+        {
+            version: "{{ FRAMEWORK_VERSION }}",
+            commit: "default",
+            branch: "default"
+        } end' /apps.json > /tmp/apps.json
+    mv /tmp/apps.json /apps.json
+
+%runscript
+    if [ $# -eq 0 ]
+    then
+        /bin/bash -c ". /opt/spack/share/spack/setup-env.sh && spack env activate default-env && . /opt/software/linux*/*/openfoam-2306*/etc/bashrc && /bin/bash --login"
+    else
+        /bin/bash -c ". /opt/spack/share/spack/setup-env.sh && spack env activate default-env && . /opt/software/linux*/*/openfoam-2306*/etc/bashrc && $@"
+    fi
+
+%labels
+    Maintainer Mohammed Elwardi Fadeli
+    Description Spack-based ESI OpenFOAM image with OpenMPI
