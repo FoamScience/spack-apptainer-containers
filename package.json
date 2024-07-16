@@ -1,0 +1,7 @@
+{
+    "name": "spack-apptainer-containers",
+    "license": "MIT",
+    "dependencies": {
+      "ansilbe-playbook": "github:FoamScience/openfoam-apptainer-packaging"
+    }
+}
