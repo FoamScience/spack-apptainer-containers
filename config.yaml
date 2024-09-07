@@ -1,5 +1,5 @@
 containers:
-  extra_basics: /home/fadeli/repos/spack-apptainer-containers
+  extra_basics: ~/repos/spack-apptainer-containers
   basic:
     opencfd-openfoam: # base container identifier
       os:
