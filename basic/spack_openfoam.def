@@ -1,10 +1,9 @@
 Bootstrap: localimage
-From: ./containers/basic/{{ OS_DISTRO }}-{{ OS_VERSION }}-{{MPI_IMPLEMENTATION}}-{{ MPI_VERSION }}.sif
+From: ./containers/basic/{{ BASE_CONTAINER }}.sif
 
 %post
     . /opt/spack/share/spack/setup-env.sh
     spack env activate default-env
-    mpi_impl=$(expr "{{ MPI_IMPLEMENTATION }}" : 'spack_\(.*\)')
     spack add openfoam@{{ FRAMEWORK_VERSION }}
     spack install --fail-fast
     jq --arg app openfoam \

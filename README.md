@@ -8,10 +8,7 @@ done through loading custom definitions for base containers (FoamScience/openfoa
 
 Here are your quick instructions to get started:
 ```bash
-git clone https://github.com/FoamScience/openfoam-apptainer-packaging /tmp/tainers
-git clone https://github.com/FoamScience/spack-apptainer-containers
-cd spack-apptainer-containers
-ansible-playbook /tmp/tainers/build.yaml --extra-vars "original_dir=$PWD" --extra-vars "@config.yaml"
+uvx hpctainers
 # check containers/basic
 ```
 
